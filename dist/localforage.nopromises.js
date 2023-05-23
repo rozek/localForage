@@ -679,10 +679,10 @@ function iterate(iterator, callback) {
     return promise;
 }
 
-function setItem(key, value, callback) {
+function setItem(originalKey, value, callback) {
     var self = this;
 
-    key = normalizeKey(key);
+    key = normalizeKey(originalKey);
 
     var promise = new Promise$1(function (resolve, reject) {
         var dbInfo;
@@ -727,6 +727,8 @@ function setItem(key, value, callback) {
                             value = null;
                         }
 
+                        document.body.dispatchEvent(new CustomEvent('store-item-changed', { detail: { store: self._dbInfo.storeName, key: originalKey } }));
+
                         resolve(value);
                     };
                     transaction.onabort = transaction.onerror = function () {
@@ -744,10 +746,10 @@ function setItem(key, value, callback) {
     return promise;
 }
 
-function removeItem(key, callback) {
+function removeItem(originalKey, callback) {
     var self = this;
 
-    key = normalizeKey(key);
+    key = normalizeKey(originalKey);
 
     var promise = new Promise$1(function (resolve, reject) {
         self.ready().then(function () {
@@ -765,6 +767,8 @@ function removeItem(key, callback) {
                     // fixes this for us now.
                     var req = store["delete"](key);
                     transaction.oncomplete = function () {
+                        document.body.dispatchEvent(new CustomEvent('store-item-removed', { detail: { store: self._dbInfo.storeName, key: originalKey } }));
+
                         resolve();
                     };
 
@@ -804,6 +808,8 @@ function clear(callback) {
                     var req = store.clear();
 
                     transaction.oncomplete = function () {
+                        document.body.dispatchEvent(new CustomEvent('store-cleared', { detail: { store: self._dbInfo.storeName } }));
+
                         resolve();
                     };
 
