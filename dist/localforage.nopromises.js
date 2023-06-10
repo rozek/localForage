@@ -727,7 +727,12 @@ function setItem(originalKey, value, callback) {
                             value = null;
                         }
 
-                        document.body.dispatchEvent(new CustomEvent('store-item-changed', { detail: { store: self._dbInfo.storeName, key: originalKey } }));
+                        document.body.dispatchEvent(new CustomEvent('store-item-changed', {
+                            detail: {
+                                store: self._dbInfo.storeName,
+                                key: originalKey
+                            }
+                        }));
 
                         resolve(value);
                     };
@@ -767,7 +772,12 @@ function removeItem(originalKey, callback) {
                     // fixes this for us now.
                     var req = store["delete"](key);
                     transaction.oncomplete = function () {
-                        document.body.dispatchEvent(new CustomEvent('store-item-removed', { detail: { store: self._dbInfo.storeName, key: originalKey } }));
+                        document.body.dispatchEvent(new CustomEvent('store-item-removed', {
+                            detail: {
+                                store: self._dbInfo.storeName,
+                                key: originalKey
+                            }
+                        }));
 
                         resolve();
                     };
@@ -808,7 +818,9 @@ function clear(callback) {
                     var req = store.clear();
 
                     transaction.oncomplete = function () {
-                        document.body.dispatchEvent(new CustomEvent('store-cleared', { detail: { store: self._dbInfo.storeName } }));
+                        document.body.dispatchEvent(new CustomEvent('store-cleared', {
+                            detail: { store: self._dbInfo.storeName }
+                        }));
 
                         resolve();
                     };
